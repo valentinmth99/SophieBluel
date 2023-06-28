@@ -1,74 +1,103 @@
-let user = {
-    email: 'sophie.bluel@test.tld',
-    password: 'S0phie'
-};
-  
-function loginAPI(user) {
-    return fetch('http://localhost:5678/api/users/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify(user)
-})}
+async function fetchWorks() {
+  let url = "http://localhost:5678/api/works";
+  try {
+    let res = await fetch(url);
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-let tableWorks;
+async function fetchCategories() {
+  let url = "http://localhost:5678/api/categories";
+  try {
+    let res = await fetch(url);
+    return await res.json();
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-function getWorks() {
-fetch('http://localhost:5678/api/works')
-.then( results => results.json())
-.then( results => tableWorks = results)
-.then(() => console.log(tableWorks));
-};
+async function displayWorks() {
+  let tableWorks = await fetchWorks();
+  let galleryDiv = document.querySelector(".gallery");
+  galleryDiv.innerHTML = "";
 
-let exeAPI = loginAPI(user).then(getWorks());
+  for (i = 0; i < tableWorks.length; i++) {
+    let figure = document.createElement("figure");
+    let image = document.createElement("img");
+    let caption = document.createElement("figcaption");
+    galleryDiv.appendChild(figure);
+    figure.append(image, caption);
 
-exeAPI.then(() => { 
-    let galleryDiv = document.querySelector('.gallery');
-    galleryDiv.innerHTML = "";
-    for (i = 0; i < tableWorks.length; i++) {
-        let figure = document.createElement("figure");
-        let image = document.createElement("img");
-        let caption = document.createElement("figcaption");
-        galleryDiv.appendChild(figure);
-        figure.append(image, caption);
+    image.src = tableWorks[i].imageUrl;
+    caption.innerText = tableWorks[i].title;
+  }
+}
 
-        image.src = tableWorks[i].imageUrl;
-        caption.innerText = tableWorks[i].title;
-    }   
-})
-// FirstRequestToGraph(AccessToken).then(function() {
-//     alert('testing1234');
-// });
+async function displayCategories() {
+  let tableCategories = await fetchCategories();
+  let filtersDiv = document.querySelector(".filters");
 
-// function RequestNextPage(NextPage) {
-//     return fetch(NextPage, {
-//         method: 'GET'
-//     })
-//     .then(function(response) {
-//         return response.json();
-//     })
-//     .then(function(json) {
-//         RequestNextPage(json.paging.next);
-//     })
-//     .catch(function(err) {
-//         console.log(`Error: ${err}`)
-//     });
-// }
+  for (i = 0; i < tableCategories.length; i++) {
+    let btn = document.createElement("button");
+    btn.className = "btnFilter";
+    btn.value = tableCategories[i].name;
+    btn.innerText = btn.value;
+    filtersDiv.appendChild(btn);
+  }
+}
 
-// function FirstRequestToGraph(AccessToken) {
-//     return fetch('https://graph.facebook.com/v2.8/me?fields=posts.limit(275){privacy}%2Cname&access_token=' + AccessToken, {
-//         method: 'GET'
-//     })
-//     .then(function(response) {
-//         return response.json();
-//     })
-//     .then(function(json) {
-//         if(json.data.length !== 0 ){
-//            return RequestNextPage(json.paging.next);
-//         }
-//     })
-//     .catch(function(err) {
-//         console.log(`Error: ${err}`)
-//     });
-// }
+async function displayAll() {
+  try {
+    await displayWorks();
+    await displayCategories();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+displayAll().then(async () => {
+  try {
+    let tableWorks = await fetchWorks();
+    let galleryDiv = document.querySelector(".gallery");
+    let btns = document.querySelectorAll(".btnFilter");
+    let worksFiltered = new Set();
+
+    function filterWorks() {
+      btns.forEach(function (btn) {
+        btn.addEventListener("click", function (event) {
+          if (event.target.value == "All") {
+            worksFiltered.clear();
+            worksFiltered.add(tableWorks);
+          } else {
+            let filteredTableWorks = tableWorks.filter(function (cat) {
+              return cat.category.name == event.target.value;
+            });
+            worksFiltered.clear();
+            worksFiltered.add(filteredTableWorks);
+          }
+          galleryDiv.innerHTML = "";
+
+          let filterArray = Array.from(worksFiltered);
+          console.log(filterArray);
+
+          for (i = 0; i < filterArray[0].length; i++) {
+            let figure = document.createElement("figure");
+            let image = document.createElement("img");
+            let caption = document.createElement("figcaption");
+            galleryDiv.appendChild(figure);
+            figure.append(image, caption);
+
+            image.src = filterArray[0][i]["imageUrl"];
+            caption.innerText = filterArray[0][i]["title"];
+          }
+        });
+      });
+    }
+
+    filterWorks();
+  } catch (error) {
+    console.log(error);
+  }
+});
