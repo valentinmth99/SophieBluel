@@ -101,3 +101,20 @@ displayAll().then(async () => {
     console.log(error);
   }
 });
+
+// function FirstRequestToGraph(AccessToken) {
+//     return fetch('https://graph.facebook.com/v2.8/me?fields=posts.limit(275){privacy}%2Cname&access_token=' + AccessToken, {
+//         method: 'GET'
+//     })
+//     .then(function(response) {
+//         return response.json();
+//     })
+//     .then(function(json) {
+//         if(json.data.length !== 0 ){
+//            return RequestNextPage(json.paging.next);
+//         }
+//     })
+//     .catch(function(err) {
+//         console.log(`Error: ${err}`)
+//     });
+// }
