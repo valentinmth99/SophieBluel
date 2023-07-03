@@ -71,9 +71,7 @@ displayAll().then(async () => {
             worksFiltered.clear();
             worksFiltered.add(tableWorks);
           } else {
-            let filteredTableWorks = tableWorks.filter(function (cat) {
-              return cat.category.name == event.target.value;
-            });
+            let filteredTableWorks = tableWorks.filter((cat) => cat.category.name == event.target.value);
             worksFiltered.clear();
             worksFiltered.add(filteredTableWorks);
           }
@@ -101,3 +99,7 @@ displayAll().then(async () => {
     console.log(error);
   }
 });
+
+if (localStorage.getItem("token")) {
+  
+} 
