@@ -99,7 +99,22 @@ displayAll().then(async () => {
     console.log(error);
   }
 });
+let btnModify = document.querySelector('.btnModify');
+let adminHeader = document.querySelector(".admin_header");
 
 if (localStorage.getItem("token")) {
-  
+  btnModify.hidden = false;
+  adminHeader.hidden = false;
 } 
+
+else {
+  btnModify.hidden = true;
+  adminHeader.hidden = true;
+}
+
+btnModify.addEventListener('click', (e) => {
+  let modale = document.querySelector('aside');
+
+  modale.ariaHidden = false;
+}
+)

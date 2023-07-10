@@ -4,6 +4,8 @@ let submit = document.querySelector("form input[type=submit]");
 
 submit.addEventListener("click", async (e) => {
     e.preventDefault();
+    
+
     let email = document.querySelector("input[type='email']").value;
     let password = document.querySelector("input[type='password']").value;
     let response = await fetch("http://localhost:5678/api/users/login", {
@@ -22,6 +24,7 @@ submit.addEventListener("click", async (e) => {
         localStorage.setItem("token", data.token);
         window.location = "index.html";
     } else {
+        
         alert("Combinaison email/mot de passe incorrecte");
     }
     }
