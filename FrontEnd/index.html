@@ -18,20 +18,19 @@
 		<p>Mode édition</p>
 		<button>publier les changements</button>
 	</div>
+	<div class="user_header">
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li><a href="login.html">login</a></li>
+			<li id="log_gestion"><a href="login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
+	</div>
 </header>
 <main>
-	<aside id="modal" aria-hidden="true" hidden>
-		<h1>Modale</h1>
-	</aside>
 	<section id="introduction">
 		<figure>
 			<img src="./assets/images/sophie-bluel.png" alt="">
@@ -45,7 +44,7 @@
 	</section>
 	<section id="portfolio">
 		<h2>Mes Projets</h2>
-		<button class="btnModify"><i class="fa-regular fa-pen-to-square"></i>modifier</button>
+		<button class="btnModify" onclick="openModal()"><i class="fa-regular fa-pen-to-square"></i> modifier</button>
 		<div class="filters">
 			<button class="btnFilter" value="All">Tous</button>
 		</div>
@@ -118,6 +117,18 @@
 		</ul>
 	</nav>
 </footer>
+<div class="overlay" onclick="closeModal()"></div>
+<div class="modal">
+	<div class="modal__close" onclick="closeModal()">
+		<i class="fa-solid fa-xmark fa-xl"></i>
+	</div>
+	<h1>Galerie photo</h1>
+	<div class="modal__body"></div>
+	<div class="modal__footer">
+		<input type="submit" value="Ajouter une photo">
+		<a href="#">Supprimer la galerie</a>
+	</div>
+</div>
 <script src="script.js"></script>
 </body>
 </html>

@@ -4,7 +4,6 @@ let submit = document.querySelector("form input[type=submit]");
 
 submit.addEventListener("click", async (e) => {
     e.preventDefault();
-    
 
     let email = document.querySelector("input[type='email']").value;
     let password = document.querySelector("input[type='password']").value;

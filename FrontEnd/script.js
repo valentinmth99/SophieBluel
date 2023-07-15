@@ -59,6 +59,8 @@ async function displayAll() {
 
 displayAll().then(async () => {
   try {
+
+    //global variable no API call
     let tableWorks = await fetchWorks();
     let galleryDiv = document.querySelector(".gallery");
     let btns = document.querySelectorAll(".btnFilter");
@@ -71,7 +73,9 @@ displayAll().then(async () => {
             worksFiltered.clear();
             worksFiltered.add(tableWorks);
           } else {
-            let filteredTableWorks = tableWorks.filter((cat) => cat.category.name == event.target.value);
+            let filteredTableWorks = tableWorks.filter(
+              (cat) => cat.category.name == event.target.value
+            );
             worksFiltered.clear();
             worksFiltered.add(filteredTableWorks);
           }
@@ -99,22 +103,72 @@ displayAll().then(async () => {
     console.log(error);
   }
 });
-let btnModify = document.querySelector('.btnModify');
+let btnModify = document.querySelector(".btnModify");
+let header = document.querySelector("header");
 let adminHeader = document.querySelector(".admin_header");
+let logDiv = document.querySelector("#log_gestion a");
 
 if (localStorage.getItem("token")) {
   btnModify.hidden = false;
   adminHeader.hidden = false;
-} 
-
-else {
+  logDiv.href = "#";
+  logDiv.innerText = "logout";
+  header.style.flexDirection = "column";
+  adminHeader.style.display = "flex";
+} else {
   btnModify.hidden = true;
   adminHeader.hidden = true;
 }
 
-btnModify.addEventListener('click', (e) => {
-  let modale = document.querySelector('aside');
+function openModal() {
+  let modal = document.querySelector(".modal");
+  let overlay = document.querySelector(".overlay");
 
-  modale.ariaHidden = false;
+  overlay.style.display = "block";
+  modal.style.display = "block";
+
+  let modalBody = document.querySelector(".modal__body");
+  modalBody.innerHTML = "";
+  //global variable no API call
+  fetchWorks().then((tableWorks) => {
+    for (i = 0; i < tableWorks.length; i++) {
+      let figure = document.createElement("figure");
+      figure.className = "modal__figure";
+      figure.id = tableWorks[i].id;
+      let image = document.createElement("img");
+      let icon = document.createElement("i");
+      icon.className = "fa-solid fa-trash-can fa-sm";
+      icon.setAttribute("onclick","deleteWork(event)");
+      let caption = document.createElement("figcaption");
+
+      modalBody.append(figure);
+      figure.append(image, icon, caption);
+
+      image.src = tableWorks[i].imageUrl;
+      caption.innerText = "éditer";
+    }
+  });
 }
-)
+
+function closeModal() {
+  let modal = document.querySelector(".modal");
+  let overlay = document.querySelector(".overlay");
+
+  overlay.style.display = "none";
+  modal.style.display = "none";
+}
+
+async function deleteWork(event) {
+
+  try {
+ await fetch('http://localhost:5678/api/works/' + event.target.parentNode.id, {
+  //headers token bearer
+  method: 'DELETE',
+}).then(res => res.text())
+.then(res => alert(res))
+  // modalBody = document.querySelector(".modal__body");
+}
+
+catch (error) {
+  console.log(error);
+}}
