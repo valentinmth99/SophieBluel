@@ -2,7 +2,8 @@ async function fetchWorks() {
   let url = "http://localhost:5678/api/works";
   try {
     let res = await fetch(url);
-    return await res.json();
+    const tableWorks = await res.json();
+    return tableWorks;
   } catch (error) {
     console.log(error);
   }
@@ -59,7 +60,6 @@ async function displayAll() {
 
 displayAll().then(async () => {
   try {
-
     //global variable no API call
     let tableWorks = await fetchWorks();
     let galleryDiv = document.querySelector(".gallery");
@@ -103,6 +103,7 @@ displayAll().then(async () => {
     console.log(error);
   }
 });
+
 let btnModify = document.querySelector(".btnModify");
 let header = document.querySelector("header");
 let adminHeader = document.querySelector(".admin_header");
@@ -138,7 +139,7 @@ function openModal() {
       let image = document.createElement("img");
       let icon = document.createElement("i");
       icon.className = "fa-solid fa-trash-can fa-sm";
-      icon.setAttribute("onclick","deleteWork(event)");
+      icon.setAttribute("onclick", "deleteWork(event)");
       let caption = document.createElement("figcaption");
 
       modalBody.append(figure);
@@ -159,16 +160,29 @@ function closeModal() {
 }
 
 async function deleteWork(event) {
-
   try {
- await fetch('http://localhost:5678/api/works/' + event.target.parentNode.id, {
-  //headers token bearer
-  method: 'DELETE',
-}).then(res => res.text())
-.then(res => alert(res))
-  // modalBody = document.querySelector(".modal__body");
+    await fetch(
+      "http://localhost:5678/api/works/" + event.target.parentNode.id,
+      {
+        //headers token bearer
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + localStorage.token
+        }
+      }
+    )
+      .then((res) => res.status)
+      .then((res) => {
+        if (res == "401" || res == "500"){
+          alert("Erreur, veuillez vous reconnecter");
+        }
+        else {
+          event.target.parentNode.remove();
+          event.preventDefault();
+        }
+      })
+  } 
+  catch(error) {
+    console.log(error);
+  }
 }
-
-catch (error) {
-  console.log(error);
-}}
