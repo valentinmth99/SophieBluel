@@ -137,7 +137,7 @@ li:hover {
 }
 #introduction {
 	display: flex;
-	alig-items: center;
+	align-items: center;
 }
 #introduction figure {
 	flex: 1
@@ -190,6 +190,7 @@ li:hover {
 	background-color: #fffef8;
 	color: #1D6154;
 	font-family: 'Syne';
+	font-weight: 700;
 	font-size: 16px;
 	border: 1px solid #1D6154;
 	border-radius: 20px;
@@ -241,7 +242,7 @@ margin: auto;
 	flex-direction: column;
 }
 
-#contact input, form input {
+#contact input, form input, form select {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
@@ -265,6 +266,8 @@ input[type="submit"]{
 	text-align: center;
 	border-radius: 60px ;
 	border: 0;
+	cursor: pointer;
+	padding: 10px 20px;
 }
 
 footer nav ul {
@@ -301,6 +304,10 @@ footer nav ul {
 	top: 24px;
 	right: 24px;
 	cursor: pointer;
+}
+
+.modal__2 {
+	display: none;
 }
 
 .modal h1 {
@@ -352,4 +359,56 @@ footer nav ul {
 	font-family: "Syne";
 	font-weight: lighter;
 	color: red;
+}
+
+.modal__input {
+	align-self: center;
+	width: 420px;
+	height: 170px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	background: #E8F1F6;
+	text-align: center;
+}
+
+.modal__input i {
+	font-size: 50px;
+	color: #B9C5CC;
+}
+
+#imageFile {
+	display: none;
+}
+
+.modal__input label {
+	display: block;
+	position: relative;
+	background: #CBD6DC;
+	color: #306685;
+	font-size: 15px;
+	text-align: center;
+	width: 170px;
+	padding: 10px 0;
+	border-radius: 50px;
+	margin: 0 auto;
+	cursor: pointer;
+}
+
+.modal__input p {
+	font-size: 11px;
+	font-weight: 400;
+}
+
+
+.msg {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 630px;
+	height: 750px;
+	color: #1D6154;
+	border-radius: 10px;
+	padding: 20px;
 }

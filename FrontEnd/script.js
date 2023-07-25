@@ -1,8 +1,11 @@
+let tableWorks;
+let tableCategories;
+
 async function fetchWorks() {
   let url = "http://localhost:5678/api/works";
   try {
     let res = await fetch(url);
-    const tableWorks = await res.json();
+    tableWorks = await res.json();
     return tableWorks;
   } catch (error) {
     console.log(error);
@@ -13,14 +16,15 @@ async function fetchCategories() {
   let url = "http://localhost:5678/api/categories";
   try {
     let res = await fetch(url);
-    return await res.json();
+    let tableCategories = await res.json();
+    return tableCategories;
   } catch (error) {
     console.log(error);
   }
 }
 
 async function displayWorks() {
-  let tableWorks = await fetchWorks();
+  tableWorks = await fetchWorks();
   let galleryDiv = document.querySelector(".gallery");
   galleryDiv.innerHTML = "";
 
@@ -37,7 +41,7 @@ async function displayWorks() {
 }
 
 async function displayCategories() {
-  let tableCategories = await fetchCategories();
+  tableCategories = await fetchCategories();
   let filtersDiv = document.querySelector(".filters");
 
   for (i = 0; i < tableCategories.length; i++) {
@@ -60,8 +64,6 @@ async function displayAll() {
 
 displayAll().then(async () => {
   try {
-    //global variable no API call
-    let tableWorks = await fetchWorks();
     let galleryDiv = document.querySelector(".gallery");
     let btns = document.querySelectorAll(".btnFilter");
     let worksFiltered = new Set();
@@ -114,11 +116,17 @@ if (localStorage.getItem("token")) {
   adminHeader.hidden = false;
   logDiv.href = "#";
   logDiv.innerText = "logout";
+  logDiv.setAttribute("onclick", "logout()");
   header.style.flexDirection = "column";
   adminHeader.style.display = "flex";
 } else {
   btnModify.hidden = true;
   adminHeader.hidden = true;
+}
+
+function logout() {
+  localStorage.removeItem("token");
+  location.reload();
 }
 
 function openModal() {
@@ -128,26 +136,30 @@ function openModal() {
   overlay.style.display = "block";
   modal.style.display = "block";
 
+  let modal1 = document.querySelector(".modal__1");
+  modal1.style.display = "block";
+
+  let modal2 = document.querySelector(".modal__2");
+  modal2.style.display = "none";
+
   let modalBody = document.querySelector(".modal__body");
   modalBody.innerHTML = "";
   //global variable no API call
-  fetchWorks().then((tableWorks) => {
-    for (i = 0; i < tableWorks.length; i++) {
-      let figure = document.createElement("figure");
-      figure.className = "modal__figure";
-      figure.id = tableWorks[i].id;
-      let image = document.createElement("img");
-      let icon = document.createElement("i");
-      icon.className = "fa-solid fa-trash-can fa-sm";
-      icon.setAttribute("onclick", "deleteWork(event)");
-      let caption = document.createElement("figcaption");
+  tableWorks.forEach((item) => {
+    let figure = document.createElement("figure");
+    figure.className = "modal__figure";
+    figure.id = item.id;
+    let image = document.createElement("img");
+    let icon = document.createElement("i");
+    icon.className = "fa-solid fa-trash-can fa-sm";
+    icon.setAttribute("onclick", "deleteWork(event)");
+    let caption = document.createElement("figcaption");
 
-      modalBody.append(figure);
-      figure.append(image, icon, caption);
+    modalBody.append(figure);
+    figure.append(image, icon, caption);
 
-      image.src = tableWorks[i].imageUrl;
-      caption.innerText = "éditer";
-    }
+    image.src = item.imageUrl;
+    caption.innerText = "éditer";
   });
 }
 
@@ -160,6 +172,7 @@ function closeModal() {
 }
 
 async function deleteWork(event) {
+  
   try {
     await fetch(
       "http://localhost:5678/api/works/" + event.target.parentNode.id,
@@ -167,22 +180,74 @@ async function deleteWork(event) {
         //headers token bearer
         method: "DELETE",
         headers: {
-          Authorization: "Bearer " + localStorage.token
-        }
+          Authorization: "Bearer " + localStorage.token,
+        },
       }
     )
       .then((res) => res.status)
       .then((res) => {
-        if (res == "401" || res == "500"){
+        if (res == "401" || res == "500") {
           alert("Erreur, veuillez vous reconnecter");
-        }
-        else {
+        } else {
           event.target.parentNode.remove();
-          event.preventDefault();
         }
-      })
-  } 
-  catch(error) {
+      });
+  } catch (error) {
     console.log(error);
   }
+}
+
+function changeModal() {
+  let modal1 = document.querySelector(".modal__1");
+  modal1.style.display = "none";
+
+  let modal2 = document.querySelector(".modal__2");
+  modal2.style.display = "block";
+
+  let select = document.querySelector("#category");
+  select.innerHTML = "";
+
+  tableCategories.forEach((item) => {
+    let option = document.createElement("option");
+    option.value = item.id;
+    option.innerText = item.name;
+    select.appendChild(option);
+  });
+}
+
+function addWork(event) {
+  let title = document.querySelector("#title").value;
+  let file = document.querySelector("#imageFile");
+  let category = document.querySelector("#category").value;
+
+  const formData = new FormData();
+  formData.append("image", file.files[0]);
+  formData.append("title", title);
+  formData.append("category", category);
+
+  event.preventDefault();
+
+  fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    headers: {
+      Authorization: "Bearer " + localStorage.token,
+    },
+    body: formData,
+  })
+    .then((res) => res.status)
+    .then((res) => {
+      if (res == "201") {
+        event.preventDefault();
+        let msg = document.createElement("p");
+        msg.className = "msg";
+        msg.innerText = "L'oeuvre a bien été ajoutée";
+
+        modal = document.querySelector(".modal");
+        modal.innerHTML = "";
+        modal.appendChild(msg);
+        displayAll();
+      } else {
+        alert("Erreur, veuillez vous reconnecter");
+      }
+    });
 }
