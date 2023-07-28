@@ -169,10 +169,12 @@ function closeModal() {
 
   overlay.style.display = "none";
   modal.style.display = "none";
+
+  let containerData = document.querySelector(".modal__data");
+  containerData.style.display = "flex";
 }
 
 async function deleteWork(event) {
-  
   try {
     await fetch(
       "http://localhost:5678/api/works/" + event.target.parentNode.id,
@@ -199,26 +201,35 @@ async function deleteWork(event) {
 
 function changeModal() {
   let modal1 = document.querySelector(".modal__1");
-  modal1.style.display = "none";
-
   let modal2 = document.querySelector(".modal__2");
-  modal2.style.display = "block";
-
   let select = document.querySelector("#category");
-  select.innerHTML = "";
+  let containerImg = document.querySelector(".image__display");
 
-  tableCategories.forEach((item) => {
-    let option = document.createElement("option");
-    option.value = item.id;
-    option.innerText = item.name;
-    select.appendChild(option);
-  });
+  if (modal1.style.display = "block") {
+    modal1.style.display = "none";
+    modal2.style.display = "block";
+
+    select.innerHTML = "";
+
+    tableCategories.forEach((item) => {
+      let option = document.createElement("option");
+      option.value = item.id;
+      option.innerText = item.name;
+      select.appendChild(option);
+    });
+
+    containerImg.style.display = "none";
+  }
+
+  else {
+    openModal();
+  }
 }
 
 function addWork(event) {
   let title = document.querySelector("#title").value;
-  let file = document.querySelector("#imageFile");
   let category = document.querySelector("#category").value;
+  let file = document.querySelector("#imageFile");
 
   const formData = new FormData();
   formData.append("image", file.files[0]);
@@ -251,3 +262,24 @@ function addWork(event) {
       }
     });
 }
+
+//////////////////////////////////////////////////////////////////:
+
+function showPreview(event) {
+  if (event.target.files.length > 0) {
+    let src = URL.createObjectURL(event.target.files[0]);
+    let preview = document.getElementById("imgPreview");
+    let containerImg = document.querySelector(".image__display");
+    containerImg.style.display = "block";
+    preview.src = src;
+
+    let containerData = document.querySelector(".modal__data");
+    containerData.style.display = "none";
+  }
+}
+
+let iconBackModal = document.querySelector(".modal__change");
+
+iconBackModal.addEventListener('click', () => {
+  openModal();
+})

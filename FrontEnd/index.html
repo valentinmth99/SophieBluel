@@ -178,6 +178,7 @@
       <div class="modal__1">
         <h1>Galerie photo</h1>
         <div class="modal__body"></div>
+        <hr class="line" />
         <div class="modal__footer">
           <input
             type="submit"
@@ -188,24 +189,33 @@
         </div>
       </div>
       <div class="modal__2">
+        <div class="modal__change">
+        <i class="fa-solid fa-arrow-left"></i>
+        </div>
         <h1>Ajout photo</h1>
         <form>
           <div class="modal__input">
-            <i class="fa-regular fa-image"></i>
-            <input
-              id="imageFile"
-              type="file"
-              accept="image/png, image/jpeg"
-              required
-            />
-			<label for="imageFile">+ Ajout photo</label>
-            <p>jpg, png : 4mo max</p>
+            <div class="modal__data">
+              <i class="fa-regular fa-image"></i>
+              <input
+                id="imageFile"
+                type="file"
+                accept="image/png, image/jpeg"
+                required
+                onchange="showPreview(event)"
+              />
+              <label for="imageFile">+ Ajout photo</label>
+              <p>jpg, png : 4mo max</p>
+            </div>
+            <div class="image__display">
+              <img id="imgPreview" />
+            </div>
           </div>
           <label for="title">Titre</label>
           <input type="text" id="title" required />
           <label for="category">Catégorie</label>
           <select id="category" required></select>
-          <div class="line"></div>
+          <hr class="line" />
           <button onclick="addWork(event)">Valider</button>
         </form>
       </div>
