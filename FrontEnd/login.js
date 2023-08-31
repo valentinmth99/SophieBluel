@@ -18,13 +18,21 @@ submit.addEventListener("click", async (e) => {
         }),
     });
     let data = await response.json();
-    console.log(data);
+    const divError = document.querySelector(".error");
+    divError.innerHTML = "";
+    
     if (data.token) {
         localStorage.setItem("token", data.token);
         window.location = "index.html";
     } else {
         
-        alert("Combinaison email/mot de passe incorrecte");
+        const p = document.createElement('p');
+        const divError = document.querySelector(".error");
+        p.className = "error";
+        divError.appendChild(p);
+
+        p.innerText = "Erreur dans l’identifiant ou le mot de passe";
+
     }
     }
     );

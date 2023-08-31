@@ -84,7 +84,6 @@ displayAll().then(async () => {
           galleryDiv.innerHTML = "";
 
           let filterArray = Array.from(worksFiltered);
-          console.log(filterArray);
 
           for (i = 0; i < filterArray[0].length; i++) {
             let figure = document.createElement("figure");
@@ -144,7 +143,6 @@ function openModal() {
 
   let modalBody = document.querySelector(".modal__body");
   modalBody.innerHTML = "";
-  //global variable no API call
   tableWorks.forEach((item) => {
     let figure = document.createElement("figure");
     figure.className = "modal__figure";
@@ -175,11 +173,14 @@ function closeModal() {
 }
 
 async function deleteWork(event) {
+  let positionFig = Array.from(
+    event.target.parentNode.parentNode.children
+  ).indexOf(event.target.parentNode);
+
   try {
     await fetch(
       "http://localhost:5678/api/works/" + event.target.parentNode.id,
       {
-        //headers token bearer
         method: "DELETE",
         headers: {
           Authorization: "Bearer " + localStorage.token,
@@ -191,7 +192,10 @@ async function deleteWork(event) {
         if (res == "401" || res == "500") {
           alert("Erreur, veuillez vous reconnecter");
         } else {
+          let figure = document.querySelector(".gallery").childNodes;
+          figure[positionFig].remove();
           event.target.parentNode.remove();
+          delete tableWorks[positionFig];
         }
       });
   } catch (error) {
@@ -204,8 +208,9 @@ function changeModal() {
   let modal2 = document.querySelector(".modal__2");
   let select = document.querySelector("#category");
   let containerImg = document.querySelector(".image__display");
+  let containerData = document.querySelector(".modal__data");
 
-  if (modal1.style.display = "block") {
+  if ((modal1.style.display = "block")) {
     modal1.style.display = "none";
     modal2.style.display = "block";
 
@@ -219,9 +224,8 @@ function changeModal() {
     });
 
     containerImg.style.display = "none";
-  }
-
-  else {
+    containerData.style.display = "flex";
+  } else {
     openModal();
   }
 }
@@ -256,14 +260,13 @@ function addWork(event) {
         modal = document.querySelector(".modal");
         modal.innerHTML = "";
         modal.appendChild(msg);
-        displayAll();
+
+        displayWorks();
       } else {
         alert("Erreur, veuillez vous reconnecter");
       }
     });
 }
-
-//////////////////////////////////////////////////////////////////:
 
 function showPreview(event) {
   if (event.target.files.length > 0) {
@@ -280,6 +283,6 @@ function showPreview(event) {
 
 let iconBackModal = document.querySelector(".modal__change");
 
-iconBackModal.addEventListener('click', () => {
+iconBackModal.addEventListener("click", () => {
   openModal();
-})
+});
